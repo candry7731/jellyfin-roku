@@ -1,8 +1,9 @@
 sub init()
-    m.top.functionName = "loadItems"
+    m.top.functionName = "LoadNetworks"
 end sub
 
-sub loadItems()
+sub LoadNetworks()
+    url = "Studios"
 
     results = []
 
@@ -14,6 +15,7 @@ sub loadItems()
         sort_order = "Descending"
     end if
 
+
     params = {
         limit: m.top.limit,
         StartIndex: m.top.startIndex,
@@ -21,10 +23,13 @@ sub loadItems()
         SortBy: sort_field,
         SortOrder: sort_order,
         recursive: m.top.recursive,
-        Fields: "Overview"
-        StudioIds: m.top.StudioIds
+        Fields: "Overview",
+        IncludeItemTypes: "",
+        userId: get_setting("active_user"),
+        IncludeItemTypes: m.top.ItemType
     }
-    print "LOAD ITEMS PARAMS: " params
+
+
     ' Handle special case when getting names starting with numeral
     if m.top.NameStartsWith <> ""
         if m.top.NameStartsWith = "#"
@@ -42,18 +47,9 @@ sub loadItems()
         params.append({ isFavorite: true })
     end if
 
-    if m.top.ItemType <> ""
-        params.append({ IncludeItemTypes: m.top.ItemType })
-    end if
-
-    if m.top.ItemType = "LiveTV"
-        url = "LiveTv/Channels"
-        params.append({ UserId: get_setting("active_user") })
-    else
-        url = Substitute("Users/{0}/Items/", get_setting("active_user"))
-    end if
     resp = APIRequest(url, params)
     data = getJson(resp)
+
     if data <> invalid
 
         if data.TotalRecordCount <> invalid then m.top.totalRecordCount = data.TotalRecordCount
@@ -72,21 +68,21 @@ sub loadItems()
                 tmp = CreateObject("roSGNode", "FolderData")
             else if item.Type = "Video"
                 tmp = CreateObject("roSGNode", "VideoData")
+            else if item.Type = "Studio"
+                tmp = CreateObject("roSGNode", "FolderData")
             else
-                print "[LoadItems] Unknown Type: " item.Type
+                print "[LoadNetworks] Unknown Type: " item.Type
             end if
 
             if tmp <> invalid
                 tmp.parentFolder = m.top.itemId
                 tmp.json = item
-                if item.UserData <> invalid and item.UserData.isFavorite <> invalid
-                    tmp.favorite = item.UserData.isFavorite
-                end if
                 results.push(tmp)
             end if
         end for
     end if
-
+    print "LOAD NETWORK PARAMS: " params
     m.top.content = results
+
 
 end sub

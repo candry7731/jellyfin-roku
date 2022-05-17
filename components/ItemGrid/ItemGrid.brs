@@ -37,9 +37,9 @@ sub init()
     m.favorite = "Favorite"
 
     m.loadItemsTask = createObject("roSGNode", "LoadItemsTask2")
+    m.LoadNetworksTask = createObject("roSGNode", "LoadNetworksTask")
     m.spinner = m.top.findNode("spinner")
     m.spinner.visible = true
-
     m.Alpha = m.top.findNode("AlphaMenu")
     m.AlphaSelected = m.top.findNode("AlphaSelected")
 end sub
@@ -47,6 +47,11 @@ end sub
 '
 'Load initial set of Data
 sub loadInitialItems()
+    print m.top.parentItem.json.Type
+    if m.top.parentItem.json.Type = "CollectionFolder"
+        m.top.HomeLibraryItem = m.top.parentItem.Id
+        print "Home libry ID  b/c not studio" m.top.HomeLibraryItem
+    end if
 
     if m.top.parentItem.backdropUrl <> invalid
         SetBackground(m.top.parentItem.backdropUrl)
@@ -65,10 +70,11 @@ sub loadInitialItems()
         sortAscendingStr = get_user_setting("display.livetv.sortAscending")
         m.filter = get_user_setting("display.livetv.filter")
     else
-        m.view = invalid
+        'm.view = invalid
         m.sortField = get_user_setting("display." + m.top.parentItem.Id + ".sortField")
         sortAscendingStr = get_user_setting("display." + m.top.parentItem.Id + ".sortAscending")
         m.filter = get_user_setting("display." + m.top.parentItem.Id + ".filter")
+        m.view = get_user_setting("display." + m.top.parentItem.Id + ".landing")
     end if
 
     if m.sortField = invalid then m.sortField = "SortName"
@@ -80,50 +86,96 @@ sub loadInitialItems()
         m.sortAscending = false
     end if
 
-    m.loadItemsTask.nameStartsWith = m.top.AlphaSelected
-    m.emptyText.visible = false
-
-    updateTitle()
-
-    m.loadItemsTask.itemId = m.top.parentItem.Id
-    m.loadItemsTask.sortField = m.sortField
-    m.loadItemsTask.sortAscending = m.sortAscending
-    m.loadItemsTask.filter = m.filter
-    m.loadItemsTask.startIndex = 0
-
-    if m.top.parentItem.collectionType = "movies"
-        m.loadItemsTask.itemType = "Movie"
-    else if m.top.parentItem.collectionType = "tvshows"
-        m.loadItemsTask.itemType = "Series"
-    else if m.top.parentItem.collectionType = "livetv"
-        m.loadItemsTask.itemType = "LiveTV"
-
-        'For LiveTV, we want to "Fit" the item images, not zoom
-        m.top.imageDisplayMode = "scaleToFit"
-
-        if get_user_setting("display.livetv.landing") = "guide" and m.options.view <> "livetv"
-            showTvGuide()
+    'if view option is selected run LoadNetworksTask instead of LoadItemsTask2
+    if m.top.parentItem.type <> "Folder" and (m.view = "Networks" or m.options.view = "Networks")
+        print "PARENT ID: " m.top.parentItem.Id
+        m.LoadNetworksTask.nameStartsWith = m.top.AlphaSelected
+        m.LoadNetworksTask.itemId = m.top.parentItem.Id
+        m.LoadNetworksTask.sortField = m.sortField
+        m.LoadNetworksTask.sortAscending = m.sortAscending
+        m.LoadNetworksTask.filter = m.filter
+        m.LoadNetworksTask.startIndex = 0
+        'm.loadItemsTask.StudioIds = m.top.parentItem.Id
+        if m.top.parentItem.collectionType = "movies"
+            m.LoadNetworksTask.itemType = "Movie"
+        else if m.top.parentItem.collectionType = "tvshows"
+            m.LoadNetworksTask.itemType = "Series"
         end if
+        updateTitle()
 
-    else if m.top.parentItem.collectionType = "CollectionFolder" or m.top.parentItem.type = "CollectionFolder" or m.top.parentItem.collectionType = "boxsets" or m.top.parentItem.Type = "Folder" or m.top.parentItem.Type = "Channel"
-        ' Non-recursive, to not show subfolder contents
-        m.loadItemsTask.recursive = false
-    else if m.top.parentItem.collectionType = "Channel"
-        m.top.imageDisplayMode = "scaleToFit"
     else
-        print "[ItemGrid] Unknown Type: " m.top.parentItem
+        print "doing else statement"
+        print "PARENT ITEM: " m.top.parentItem.parentFolder
+        m.loadItemsTask.nameStartsWith = m.top.AlphaSelected
+        m.emptyText.visible = false
+        print "TYPE: " m.top.parentItem.json.type
+        'Set Stuido Id if view is anything other than 'shows'
+        if m.top.parentItem.json.type = "Studio"
+            m.loadItemsTask.StudioIds = m.top.parentItem.Id
+        else if m.view = "Movies"
+            m.loadItemsTask.StudioIds = ""
+        end if
+        updateTitle()
+
+
+
+
+        m.loadItemsTask.sortField = m.sortField
+        m.loadItemsTask.sortAscending = m.sortAscending
+        m.loadItemsTask.filter = m.filter
+        m.loadItemsTask.startIndex = 0
+
+
+
+        if m.top.parentItem.collectionType = "movies"
+            m.loadItemsTask.itemType = "Movie"
+            m.loadItemsTask.itemId = m.top.parentItem.Id
+        else if m.top.parentItem.collectionType = "tvshows"
+            m.loadItemsTask.itemType = "Series"
+            m.loadItemsTask.itemId = m.top.parentItem.Id
+        else if m.top.parentItem.collectionType = "livetv"
+            m.loadItemsTask.itemType = "LiveTV"
+
+            'For LiveTV, we want to "Fit" the item images, not zoom
+            m.top.imageDisplayMode = "scaleToFit"
+
+            if get_user_setting("display.livetv.landing") = "guide" and m.options.view <> "livetv"
+                showTvGuide()
+            end if
+
+        else if m.top.parentItem.collectionType = "CollectionFolder" or m.top.type = "CollectionFolder" or m.top.parentItem.collectionType = "boxsets" or m.top.parentItem.Type = "Channel"
+            ' Non-recursive, to not show subfolder contents
+            m.loadItemsTask.recursive = false
+            m.loadItemsTask.itemId = m.top.parentItem.Id
+        else if m.top.parentItem.collectionType = "Channel"
+            m.top.imageDisplayMode = "scaleToFit"
+        else if m.top.parentItem.json.type = "Studio"
+            m.loadItemsTask.itemId = m.top.parentItem.parentFolder
+            print "Setting itemID " m.top.parentItem.parentFolder
+        else
+            print "[ItemGrid] Unknown Type: " m.top.parentItem
+        end if
     end if
 
-    m.loadItemsTask.observeField("content", "ItemDataLoaded")
-    m.loadItemsTask.control = "RUN"
+
+    if m.options.view = "Networks" or m.view = "Networks"
+        m.LoadNetworksTask.observeField("content", "ItemDataLoaded")
+        m.LoadNetworksTask.control = "Run"
+        m.spinner.visible = true
+        print "doing netowk loading"
+    else
+        m.loadItemsTask.observeField("content", "ItemDataLoaded")
+        m.loadItemsTask.control = "RUN"
+        m.spinner.visible = true
+        print "doing item loading"
+
+    end if
 
     SetUpOptions()
-
 end sub
 
 ' Data to display when options button selected
 sub SetUpOptions()
-
     options = {}
     options.filter = []
     options.favorite = []
@@ -162,8 +214,12 @@ sub SetUpOptions()
             { "Title": tr("Favorites"), "Name": "Favorites" }
         ]
         'TV Shows
-    else if m.top.parentItem.collectionType = "tvshows"
-        options.views = [{ "Title": tr("Shows"), "Name": "shows" }]
+    else if m.top.parentItem.collectionType = "tvshows" or m.top.parentItem.collectionType = invalid
+        options.views = [
+            { "Title": tr("Shows"), "Name": "shows" },
+            { "Title": tr("Networks"), "Name": "Networks" }
+            'TODO { "Title": tr("Episodes"), "Name": "Episodes" }
+        ]
         options.sort = [
             { "Title": tr("TITLE"), "Name": "SortName" },
             { "Title": tr("IMDB_RATING"), "Name": "CommunityRating" },
@@ -252,8 +308,15 @@ end sub
 sub ItemDataLoaded(msg)
 
     itemData = msg.GetData()
-    m.loadItemsTask.unobserveField("content")
-    m.loadItemsTask.content = []
+
+    if m.options.view = "Networks"
+        m.LoadNetworksTask.unobserveField("content")
+        m.LoadNetworksTask.content = []
+
+    else
+        m.loadItemsTask.unobserveField("content")
+        m.loadItemsTask.content = []
+    end if
 
     if itemData = invalid
         m.Loading = false
@@ -346,13 +409,18 @@ end sub
 '
 'Load next set of items
 sub loadMoreData()
-
+    m.spinner.visible = true
     if m.Loading = true then return
-
     m.Loading = true
-    m.loadItemsTask.startIndex = m.loadedItems
-    m.loadItemsTask.observeField("content", "ItemDataLoaded")
-    m.loadItemsTask.control = "RUN"
+    if m.options.view = "Networks" or m.view = "Networks" or m.top.parentItem.json.type = "Studio"
+        m.LoadNetworksTask.startIndex = m.loadedItems
+        m.LoadNetworksTask.observeField("content", "ItemDataLoaded")
+        m.LoadNetworksTask.control = "RUN"
+    else
+        m.loadItemsTask.startIndex = m.loadedItems
+        m.loadItemsTask.observeField("content", "ItemDataLoaded")
+        m.loadItemsTask.control = "RUN"
+    end if
 end sub
 
 '
@@ -366,6 +434,7 @@ sub onItemAlphaSelected()
     m.loadedItems = 0
     m.data = CreateObject("roSGNode", "ContentNode")
     m.itemGrid.content = m.data
+    m.spinner.visible = true
     loadInitialItems()
 end sub
 
@@ -373,7 +442,6 @@ end sub
 '
 'Check if options updated and any reloading required
 sub optionsClosed()
-
     if m.top.parentItem.collectionType = "livetv" and m.options.view <> m.view
         if m.options.view = "tvGuide"
             m.view = "tvGuide"
@@ -404,6 +472,13 @@ sub optionsClosed()
     end if
 
     reload = false
+    'reload and store view setting
+    if m.options.view <> m.view
+        m.view = m.options.view
+        set_user_setting("display." + m.top.parentItem.Id + ".landing", m.view)
+        reload = true
+    end if
+
     if m.options.sortField <> m.sortField or m.options.sortAscending <> m.sortAscending
         m.sortField = m.options.sortField
         m.sortAscending = m.options.sortAscending
@@ -543,5 +618,8 @@ sub updateTitle()
     end if
     if m.top.AlphaSelected <> ""
         m.top.overhangTitle = m.top.parentItem.title + tr(" (Filtered)")
+    end if
+    if m.options.view = "Networks" or m.view = "Networks"
+        m.top.overhangTitle = tr(" (Networks)")
     end if
 end sub
