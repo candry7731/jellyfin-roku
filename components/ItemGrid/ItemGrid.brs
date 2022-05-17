@@ -1,5 +1,5 @@
 sub init()
-    
+
     m.options = m.top.findNode("options")
 
     m.tvGuide = invalid
@@ -48,10 +48,10 @@ end sub
 'Load initial set of Data
 sub loadInitialItems()
     print m.top.parentItem.json.Type
-if  m.top.parentItem.json.Type = "CollectionFolder"
-    m.top.HomeLibraryItem = m.top.parentItem.Id
-    print "Home libry ID  b/c not studio" m.top.HomeLibraryItem 
-end if
+    if m.top.parentItem.json.Type = "CollectionFolder"
+        m.top.HomeLibraryItem = m.top.parentItem.Id
+        print "Home libry ID  b/c not studio" m.top.HomeLibraryItem
+    end if
 
     if m.top.parentItem.backdropUrl <> invalid
         SetBackground(m.top.parentItem.backdropUrl)
@@ -88,6 +88,7 @@ end if
 
     'if view option is selected run LoadNetworksTask instead of LoadItemsTask2
     if m.top.parentItem.type <> "Folder" and (m.view = "Networks" or m.options.view = "Networks")
+        print "PARENT ID: " m.top.parentItem.Id
         m.LoadNetworksTask.nameStartsWith = m.top.AlphaSelected
         m.LoadNetworksTask.itemId = m.top.parentItem.Id
         m.LoadNetworksTask.sortField = m.sortField
@@ -104,14 +105,13 @@ end if
 
     else
         print "doing else statement"
+        print "PARENT ITEM: " m.top.parentItem.parentFolder
         m.loadItemsTask.nameStartsWith = m.top.AlphaSelected
         m.emptyText.visible = false
-        print m.top.parentItem.json.type
+        print "TYPE: " m.top.parentItem.json.type
         'Set Stuido Id if view is anything other than 'shows'
-        if  m.top.parentItem.json.type = "Studio"
+        if m.top.parentItem.json.type = "Studio"
             m.loadItemsTask.StudioIds = m.top.parentItem.Id
-            m.loadItemsTask.itemId = m.top.HomeLibraryItem 'TODO need to get the collectionfolder ID
-            print "If json = studio then get HomeLibraryItem " m.top.HomeLibraryItem
         else if m.view = "Movies"
             m.loadItemsTask.StudioIds = ""
         end if
@@ -150,15 +150,15 @@ end if
         else if m.top.parentItem.collectionType = "Channel"
             m.top.imageDisplayMode = "scaleToFit"
         else if m.top.parentItem.json.type = "Studio"
-            m.loadItemsTask.itemId = m.HomeLibraryItem
-            print "Setting itemID "m.HomeLibraryItem
+            m.loadItemsTask.itemId = m.top.parentItem.parentFolder
+            print "Setting itemID " m.top.parentItem.parentFolder
         else
             print "[ItemGrid] Unknown Type: " m.top.parentItem
         end if
     end if
 
 
-    if m.top.parentItem.type <> "Folder" and (m.options.view = "Networks" or m.view = "Networks")
+    if m.options.view = "Networks" or m.view = "Networks"
         m.LoadNetworksTask.observeField("content", "ItemDataLoaded")
         m.LoadNetworksTask.control = "Run"
         m.spinner.visible = true

@@ -14,7 +14,6 @@ sub loadItems()
         sort_order = "Descending"
     end if
 
-
     params = {
         limit: m.top.limit,
         StartIndex: m.top.startIndex,
@@ -25,7 +24,7 @@ sub loadItems()
         Fields: "Overview"
         StudioIds: m.top.StudioIds
     }
-    print params
+    print "LOAD ITEMS PARAMS: " params
     ' Handle special case when getting names starting with numeral
     if m.top.NameStartsWith <> ""
         if m.top.NameStartsWith = "#"
@@ -78,6 +77,7 @@ sub loadItems()
             end if
 
             if tmp <> invalid
+                tmp.parentFolder = m.top.itemId
                 tmp.json = item
                 if item.UserData <> invalid and item.UserData.isFavorite <> invalid
                     tmp.favorite = item.UserData.isFavorite
