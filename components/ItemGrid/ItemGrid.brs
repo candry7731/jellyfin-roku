@@ -47,6 +47,11 @@ end sub
 '
 'Load initial set of Data
 sub loadInitialItems()
+    print m.top.parentItem.json.Type
+    if m.top.parentItem.json.Type = "CollectionFolder"
+        m.top.HomeLibraryItem = m.top.parentItem.Id
+        print "Home libry ID  b/c not studio" m.top.HomeLibraryItem
+    end if
 
     if m.top.parentItem.backdropUrl <> invalid
         SetBackground(m.top.parentItem.backdropUrl)
@@ -82,7 +87,8 @@ sub loadInitialItems()
     end if
 
     'if view option is selected run LoadNetworksTask instead of LoadItemsTask2
-    if m.view = "Networks" or m.options.view = "Networks"
+    if m.top.parentItem.type <> "Folder" and (m.view = "Networks" or m.options.view = "Networks")
+        print "PARENT ID: " m.top.parentItem.Id
         m.LoadNetworksTask.nameStartsWith = m.top.AlphaSelected
         m.LoadNetworksTask.itemId = m.top.parentItem.Id
         m.LoadNetworksTask.sortField = m.sortField
@@ -96,15 +102,15 @@ sub loadInitialItems()
             m.LoadNetworksTask.itemType = "Series"
         end if
         updateTitle()
+
     else
-
-
+        print "doing else statement"
+        print "PARENT ITEM: " m.top.parentItem.parentFolder
         m.loadItemsTask.nameStartsWith = m.top.AlphaSelected
         m.emptyText.visible = false
-
-        print m.view
+        print "TYPE: " m.top.parentItem.json.type
         'Set Stuido Id if view is anything other than 'shows'
-        if m.view = "" or m.view = "default"
+        if m.top.parentItem.json.type = "Studio"
             m.loadItemsTask.StudioIds = m.top.parentItem.Id
         else if m.view = "Movies"
             m.loadItemsTask.StudioIds = ""
@@ -123,10 +129,10 @@ sub loadInitialItems()
 
         if m.top.parentItem.collectionType = "movies"
             m.loadItemsTask.itemType = "Movie"
-            m.loadItemsTask.itemId = m.top.parentItem.id
+            m.loadItemsTask.itemId = m.top.parentItem.Id
         else if m.top.parentItem.collectionType = "tvshows"
             m.loadItemsTask.itemType = "Series"
-            m.loadItemsTask.itemId = m.top.parentItem.id
+            m.loadItemsTask.itemId = m.top.parentItem.Id
         else if m.top.parentItem.collectionType = "livetv"
             m.loadItemsTask.itemType = "LiveTV"
 
@@ -140,9 +146,12 @@ sub loadInitialItems()
         else if m.top.parentItem.collectionType = "CollectionFolder" or m.top.type = "CollectionFolder" or m.top.parentItem.collectionType = "boxsets" or m.top.parentItem.Type = "Channel"
             ' Non-recursive, to not show subfolder contents
             m.loadItemsTask.recursive = false
-            m.loadItemsTask.itemId = m.top.parentItem.id
+            m.loadItemsTask.itemId = m.top.parentItem.Id
         else if m.top.parentItem.collectionType = "Channel"
             m.top.imageDisplayMode = "scaleToFit"
+        else if m.top.parentItem.json.type = "Studio"
+            m.loadItemsTask.itemId = m.top.parentItem.parentFolder
+            print "Setting itemID " m.top.parentItem.parentFolder
         else
             print "[ItemGrid] Unknown Type: " m.top.parentItem
         end if
@@ -153,10 +162,13 @@ sub loadInitialItems()
         m.LoadNetworksTask.observeField("content", "ItemDataLoaded")
         m.LoadNetworksTask.control = "Run"
         m.spinner.visible = true
+        print "doing netowk loading"
     else
         m.loadItemsTask.observeField("content", "ItemDataLoaded")
         m.loadItemsTask.control = "RUN"
         m.spinner.visible = true
+        print "doing item loading"
+
     end if
 
     SetUpOptions()
@@ -399,9 +411,8 @@ end sub
 sub loadMoreData()
     m.spinner.visible = true
     if m.Loading = true then return
-
     m.Loading = true
-    if m.options.view = "Networks"
+    if m.options.view = "Networks" or m.view = "Networks" or m.top.parentItem.json.type = "Studio"
         m.LoadNetworksTask.startIndex = m.loadedItems
         m.LoadNetworksTask.observeField("content", "ItemDataLoaded")
         m.LoadNetworksTask.control = "RUN"
@@ -608,7 +619,7 @@ sub updateTitle()
     if m.top.AlphaSelected <> ""
         m.top.overhangTitle = m.top.parentItem.title + tr(" (Filtered)")
     end if
-    if m.options.view = "Networks"
+    if m.options.view = "Networks" or m.view = "Networks"
         m.top.overhangTitle = tr(" (Networks)")
     end if
 end sub

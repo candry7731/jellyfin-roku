@@ -75,12 +75,13 @@ sub LoadNetworks()
             end if
 
             if tmp <> invalid
+                tmp.parentFolder = m.top.itemId
                 tmp.json = item
                 results.push(tmp)
             end if
         end for
     end if
-    print params
+    print "LOAD NETWORK PARAMS: " params
     m.top.content = results
 
 
