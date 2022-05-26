@@ -1,22 +1,25 @@
 sub init()
 
     m.buttons = m.top.findNode("buttons")
-    m.buttons.buttons = [tr("Video"), tr("Audio")]
+    m.buttons.buttons = [tr("Video"), tr("Audio"), tr("Other")]
     m.buttons.selectedIndex = 0
     m.buttons.setFocus(true)
 
     m.selectedItem = 0
     m.selectedAudioIndex = 0
     m.selectedVideoIndex = 0
+    m.selectedOtherIndex = 0
 
-    m.menus = [m.top.findNode("videoMenu"), m.top.findNode("audioMenu")]
+    m.menus = [m.top.findNode("videoMenu"), m.top.findNode("audioMenu"), m.top.findNode("otheroptions")]
 
     m.videoNames = []
     m.audioNames = []
+    m.optionNames = ["Trailer"]
 
     ' Set button colors to global
     m.top.findNode("videoMenu").focusBitmapBlendColor = m.global.constants.colors.button
     m.top.findNode("audioMenu").focusBitmapBlendColor = m.global.constants.colors.button
+    m.top.findNode("otheroptions").focusBitmapBlendColor = m.global.constants.colors.button
 
     ' Animation
     m.fadeAnim = m.top.findNode("fadeAnim")
@@ -25,7 +28,7 @@ sub init()
 
     m.buttons.observeField("focusedIndex", "buttonFocusChanged")
     m.buttons.focusedIndex = m.selectedItem
-
+    m.otherIndex = m.top.findNode("otherIndex") 
 end sub
 
 sub optionsSet()
@@ -113,7 +116,8 @@ function onKeyEvent(key as string, press as boolean) as boolean
         if m.menus[m.selectedItem].isInFocusChain()
             selMenu = m.menus[m.selectedItem]
             selIndex = selMenu.itemSelected
-
+            m.otherIndex  = selIndex
+            print "Selected Index: " m.otherIndex
             'Handle Videos menu
             if m.selectedItem = 0
                 if m.selectedVideoIndex = selIndex
@@ -135,8 +139,17 @@ function onKeyEvent(key as string, press as boolean) as boolean
                     m.selectedAudioIndex = selIndex
                     m.top.audioStreamIndex = newSelection.streamIndex
                 end if
+            
+            else if m.selectedItem = 2
+                if m.selectedAudioIndex = selIndex
+                else
+                    selMenu.content.GetChild(m.selectedAudioIndex).selected = false
+                    newSelection = selMenu.content.GetChild(selIndex)
+                    newSelection.selected = true
+                    m.selectedAudioIndex = selIndex
+                    m.top.audioStreamIndex = newSelection.streamIndex
+                end if
             end if
-
         end if
         return true
     else if key = "back" or key = "up"
@@ -149,7 +162,6 @@ function onKeyEvent(key as string, press as boolean) as boolean
         m.menus[m.selectedItem].drawFocusFeedback = false
         return false
     end if
-
     return false
 
 end function

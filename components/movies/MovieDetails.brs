@@ -16,6 +16,8 @@ sub init()
     m.buttonGrp.setFocus(true)
     m.top.lastFocus = m.buttonGrp
 
+    m.otherIndex = m.top.findNode("otherIndex")
+
     m.top.observeField("itemContent", "itemContentChanged")
 end sub
 
@@ -31,6 +33,10 @@ sub itemContentChanged()
     itemData = item.json
     m.top.id = itemData.id
     m.top.findNode("moviePoster").uri = m.top.itemContent.posterURL
+    m.trailerid = m.top.findNode("trailerid")
+    if m.top.itemContent.json.RemoteTrailers.count() > 0
+    m.trailerid = m.top.itemContent.json.RemoteTrailers[0].Url
+    end if
 
     ' Set default video source
     if itemData.MediaSources <> invalid
@@ -308,7 +314,10 @@ function onKeyEvent(key as string, press as boolean) as boolean
 
     if not press then return false
 
-    if key = "back"
+    if key = "back" and m.options.otherIndex = 0
+    m.top.quickPlayNode = m.trailerid
+    print "Quickplay: " m.trailerid
+    else if key = "back"
         if m.options.visible = true
             m.options.visible = false
             videoOptionsClosed()

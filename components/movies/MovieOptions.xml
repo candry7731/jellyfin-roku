@@ -9,6 +9,14 @@
         <Group>
           <RadiobuttonList id="videoMenu" itemspacing="[0,10]" opacity="1" vertFocusAnimationStyle="floatingFocus" drawFocusFeedback="false" />
           <RadiobuttonList id="audioMenu" itemspacing="[0,10]" opacity="0" vertFocusAnimationStyle="floatingFocus" drawFocusFeedback="false" />
+          <RadiobuttonList id="otheroptions" itemspacing="[0,10]" opacity="0" vertFocusAnimationStyle="floatingFocus" drawFocusFeedback="false" >
+                  <ContentNode role="content">
+                     <ContentNode title="Play Trailer" />
+                     <ContentNode title="Add to Playlist" />
+                     <ContentNode title="Add to Collection" />
+                     <ContentNode title="Delete Media" />
+                  </ContentNode>
+          </RadiobuttonList>
         </Group>
       </LayoutGroup>
     </Group>
@@ -25,6 +33,7 @@
     <field id="videoStreamId" type="string" />
     <field id="video_codec" type="string" />
     <field id="audioStreamIndex" type="integer" />
+    <field id="otherIndex" type="integer" />
   </interface>
   <script type="text/brightscript" uri="MovieOptions.brs" />
 </component>
