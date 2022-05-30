@@ -48,6 +48,7 @@ sub loadItems()
 
     if m.top.ItemType <> ""
         params.append({ IncludeItemTypes: m.top.ItemType })
+        print "ItemType: " m.top.ItemType
     end if
 
     if m.top.searchTerm <> ""
@@ -78,7 +79,7 @@ sub loadItems()
                 tmp = CreateObject("roSGNode", "CollectionData")
             else if item.Type = "TvChannel"
                 tmp = CreateObject("roSGNode", "ChannelData")
-            else if item.Type = "Folder" or item.Type = "ChannelFolderItem" or item.Type = "CollectionFolder"
+            else if item.Type = "Folder" or item.Type = "ChannelFolderItem" or item.Type = "CollectionFolder" or item.Type = "Playlist"
                 tmp = CreateObject("roSGNode", "FolderData")
             else if item.Type = "Video"
                 tmp = CreateObject("roSGNode", "VideoData")
