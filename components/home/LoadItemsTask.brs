@@ -37,7 +37,7 @@ sub loadItems()
             tmp = CreateObject("roSGNode", "HomeData")
             item.ImageURL = ImageURL(item.Id, "Primary", params)
             if item.type = "Episode"
-                item.ImageURL = ImageURL(item.SeriesId)
+                item.ImageURL = ImageURL(item.Id)
             end if
             tmp.json = item
             results.push(tmp)
@@ -60,7 +60,7 @@ sub loadItems()
         for each item in data.Items
             tmp = CreateObject("roSGNode", "HomeData")
             if item.type = "Episode"
-                item.ImageURL = ImageURL(item.SeriesId, "Backdrop")
+                item.ImageURL = ImageURL(item.Id, "Backdrop")
             else
                 item.ImageURL = ImageURL(item.Id, "Backdrop")
             end if
@@ -89,7 +89,7 @@ sub loadItems()
         for each item in data.Items
             tmp = CreateObject("roSGNode", "HomeData")
             if item.type = "Episode"
-                item.ImageURL = ImageURL(item.SeriesId, "Backdrop")
+                item.ImageURL = ImageURL(item.Id, "Backdrop")
             else
                 item.ImageURL = ImageURL(item.Id, "Backdrop")
             end if
