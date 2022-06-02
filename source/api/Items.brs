@@ -49,7 +49,7 @@ function SearchMedia(query as string)
             "IncludeShows": true,
             "IncludeGenres": false,
             "IncludeStudios": false,
-            "IncludeArtists": false,
+            "IncludeArtists": true,
             "IncludeItemTypes": "TvChannel,Movie,BoxSet,Series,Episode,Video",
             "EnableTotalRecordCount": false,
             "ImageTypeLimit": 1,
