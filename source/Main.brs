@@ -10,6 +10,10 @@ sub Main (args as dynamic) as void
     ' Set global constants
     setConstants()
 
+    ' Write screen tracker for screensaver
+    WriteAsciiFile("tmp:/scene.temp", "")
+    MoveFile("tmp:/scene.temp", "tmp:/scene")
+
     ' Temporary code to migrate MPEG2 setting from device setting to user setting
     ' Added for 1.4.13 release and should probably be removed for 1.4.15
     if get_setting("playback.mpeg2") <> invalid and registry_read("playback.mpeg2", get_setting("active_user")) = invalid
@@ -154,9 +158,15 @@ sub Main (args as dynamic) as void
                 end if
             else if selectedItem.type = "Photo"
                 ' Nothing to do here, handled in ItemGrid
+            else if selectedItem.type = "MusicArtist"
+                group = CreateMusicArtistDetailsGroup(selectedItem.json)
+            else if selectedItem.type = "MusicAlbum"
+                group = CreateMusicAlbumDetailsGroup(selectedItem.json)
+            else if selectedItem.type = "Audio"
+                group = CreateAudioPlayerGroup([selectedItem.json])
             else
                 ' TODO - switch on more node types
-                message_dialog("This type is not yet supported: " + selectedItem.type + ".")
+                message_dialog(Substitute(tr("{0} support is coming soon!"), selectedItem.type))
             end if
         else if isNodeEvent(msg, "movieSelected")
             ' If you select a movie from ANYWHERE, follow this flow
@@ -173,6 +183,31 @@ sub Main (args as dynamic) as void
             series = msg.getRoSGNode()
             node = series.seasonData.items[ptr[1]]
             group = CreateSeasonDetailsGroup(series.itemContent, node)
+        else if isNodeEvent(msg, "musicAlbumSelected")
+            ' If you select a Music Album from ANYWHERE, follow this flow
+            ptr = msg.getData()
+            ' ptr is for [row, col] of selected item... but we only have 1 row
+            albums = msg.getRoSGNode()
+            node = albums.musicArtistAlbumData.items[ptr[1]]
+            group = CreateMusicAlbumDetailsGroup(node)
+        else if isNodeEvent(msg, "playSong")
+            ' User has selected audio they want us to play
+            selectedIndex = msg.getData()
+            screenContent = msg.getRoSGNode()
+            group = CreateAudioPlayerGroup([screenContent.albumData.items[selectedIndex]])
+        else if isNodeEvent(msg, "playAllSelected")
+            ' User has selected playlist of of audio they want us to play
+            screenContent = msg.getRoSGNode()
+            m.spinner = screenContent.findNode("spinner")
+            m.spinner.visible = true
+            group = CreateAudioPlayerGroup(screenContent.albumData.items)
+        else if isNodeEvent(msg, "instantMixSelected")
+            ' User has selected instant mix
+            ' User has selected playlist of of audio they want us to play
+            screenContent = msg.getRoSGNode()
+            m.spinner = screenContent.findNode("spinner")
+            m.spinner.visible = true
+            group = CreateInstantMixGroup(screenContent.albumData.items)
         else if isNodeEvent(msg, "episodeSelected")
             ' If you select a TV Episode from ANYWHERE, follow this flow
             node = getMsgPicker(msg, "picker")
@@ -230,6 +265,10 @@ sub Main (args as dynamic) as void
                 video = CreateVideoPlayerGroup(video_id, mediaSourceId, audio_stream_idx)
                 if video <> invalid
                     sceneManager.callFunc("pushScene", video)
+                end if
+
+                if group.lastFocus <> invalid
+                    group.lastFocus.setFocus(true)
                 end if
             else if btn <> invalid and btn.id = "watched-button"
                 movie = group.itemContent
@@ -498,6 +537,10 @@ end sub
 
 sub RunScreenSaver()
     print "Starting screensaver..."
+
+    scene = ReadAsciiFile("tmp:/scene")
+    if scene = "nowplaying" then return
+
     screen = createObject("roSGScreen")
     m.port = createObject("roMessagePort")
     screen.setMessagePort(m.port)

@@ -518,6 +518,16 @@
         <extracomment>Description for option in Setting Screen</extracomment>
     </message>
     <message>
+        <source>Item Count</source>
+        <translation>Item Count</translation>
+        <extracomment>UI -> Media Grid -> Item Count in user setting screen.</extracomment>
+    </message>
+    <message>
+        <source>Show item count in the library, and index of selected item.</source>
+        <translation>Show item count in the library, and index of selected item.</translation>
+        <extracomment>Description for option in Setting Screen</extracomment>
+    </message>
+    <message>
         <source>Set Favorite</source>
         <translation>Set Favorite</translation>
         <extracomment>Button Text - When pressed, sets item as Favorite</extracomment>
@@ -542,5 +552,36 @@
         <translation>Go to episode</translation>
         <extracomment>Continue Watching Popup Menu - Navigate to the Episode Detail Page</extracomment>
     </message>
+    <message>
+        <source>%1 of %2</source>
+        <translation>%1 of %2</translation>
+        <extracomment>Item position and count.  %1 = current item.  %2 = total number of items</extracomment>
+    </message>
+    <message>
+        <source>Quick Connect</source>
+        <translation>Quick Connect</translation>
+    </message>
+    <message>
+        <source>Here is your Quick Connect code:</source>
+        <translation>Here is your Quick Connect code:</translation>
+    </message>
+    <message>
+        <source>(Dialog will close automatically)</source>
+        <translation>(Dialog will close automatically)</translation>
+    </message>
+    <message>
+        <source>There was an error authenticating via Quick Connect.</source>
+        <translation>There was an error authenticating via Quick Connect.</translation>
+    </message>
+    <message>
+    <source>Return to Top</source>
+    <translation>Return to Top</translation>
+    <extracomment>UI -> Media Grid -> Item Title in user setting screen.</extracomment>
+</message>
+<message>
+    <source>Use the replay button to slowly animate to the first item in the folder. (If disabled, The folder will reset to the first item immediately)</source>
+    <translation>Use the replay button to slowly animate to the first item in the folder. (If disabled, The folder will reset to the first item immediately)</translation>
+    <extracomment>Description for option in Setting Screen</extracomment>
+</message>
 </context>
 </TS>

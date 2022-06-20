@@ -54,6 +54,7 @@ sub loadItems()
     end if
     resp = APIRequest(url, params)
     data = getJson(resp)
+
     if data <> invalid
 
         if data.TotalRecordCount <> invalid then m.top.totalRecordCount = data.TotalRecordCount
@@ -72,6 +73,14 @@ sub loadItems()
                 tmp = CreateObject("roSGNode", "FolderData")
             else if item.Type = "Video"
                 tmp = CreateObject("roSGNode", "VideoData")
+            else if item.Type = "Photo"
+                tmp = CreateObject("roSGNode", "PhotoData")
+            else if item.type = "PhotoAlbum"
+                tmp = CreateObject("roSGNode", "FolderData")
+            else if item.Type = "MusicArtist" or item.Type = "MusicAlbum"
+                tmp = CreateObject("roSGNode", "MusicArtistData")
+            else if item.Type = "Audio"
+                tmp = CreateObject("roSGNode", "MusicSongData")
             else
                 print "[LoadItems] Unknown Type: " item.Type
             end if

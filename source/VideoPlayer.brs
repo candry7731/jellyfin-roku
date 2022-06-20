@@ -80,7 +80,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
                     m.tmp = item
                 end for
                 'Create Series Scene
-                group = CreateSeriesDetailsGroup(m.tmp)
+                CreateSeriesDetailsGroup(m.tmp)
                 video.content = invalid
                 return
 
@@ -117,7 +117,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
                     m.Series_tmp = item
                 end for
                 'Create Season Scene
-                group = CreateSeasonDetailsGroup(m.Series_tmp, m.Season_tmp)
+                CreateSeasonDetailsGroup(m.Series_tmp, m.Season_tmp)
                 video.content = invalid
                 return
 
@@ -133,7 +133,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
                     m.episode_id = item
                 end for
                 'Create Episode Scene
-                group = CreateMovieDetailsGroup(m.episode_id)
+                CreateMovieDetailsGroup(m.episode_id)
                 video.content = invalid
                 return
             end if
@@ -184,7 +184,6 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     video.content.SubtitleTracks = subtitles["text"]
 
     ' 'TODO: allow user selection of subtitle track before playback initiated, for now set to no subtitles
-    video.SelectedSubtitle = -1
 
     video.directPlaySupported = playbackInfo.MediaSources[0].SupportsDirectPlay
     fully_external = false
@@ -234,6 +233,10 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
 
     video.content.setCertificatesFile("common:/certs/ca-bundle.crt")
     video.audioTrack = (audio_stream_idx + 1).ToStr() ' Roku's track indexes count from 1. Our index is zero based
+
+    ' Perform relevant setup work for selected subtitle, and return the index of the subtitle
+    ' is enabled/will be enabled, indexed on the provided list of subtitles
+    video.SelectedSubtitle = setupSubtitle(video, video.Subtitles, subtitle_idx)
 
     if not fully_external
         video.content = authorize_request(video.content)
