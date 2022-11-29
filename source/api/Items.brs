@@ -48,7 +48,7 @@ function searchMedia(query as string)
             "IncludeGenres": true,
             "IncludeStudios": true,
             "IncludeArtists": true,
-            "IncludeItemTypes": "LiveTvChannel,Movie,BoxSet,Series,Episode,Video,Person,Audio,MusicAlbum,MusicArtist,Playlist",
+            "IncludeItemTypes": "LiveTvChannel,Movie,BoxSet,Series,Episode,Video,Person,Audio,MusicAlbum,MusicArtist,Playlist,MusicVideo",
             "EnableTotalRecordCount": false,
             "ImageTypeLimit": 1,
             "Recursive": true,
@@ -77,13 +77,14 @@ function ItemMetaData(id as string)
     data = getJson(resp)
     if data = invalid then return invalid
     imgParams = {}
+    print "data.type: " data.type
     if data.type <> "Audio"
         if data?.UserData?.PlayedPercentage <> invalid
             param = { "PercentPlayed": data.UserData.PlayedPercentage }
             imgParams.Append(param)
         end if
     end if
-    if data.type = "Movie" or data.type = "MusicVideo"
+    if data.type = "Movie"
         tmp = CreateObject("roSGNode", "MovieData")
         tmp.image = PosterImage(data.id, imgParams)
         tmp.json = data
@@ -100,10 +101,11 @@ function ItemMetaData(id as string)
         tmp.image = PosterImage(data.id, imgParams)
         tmp.json = data
         return tmp
-    else if data.type = "BoxSet" or data.type = "Playlist"
+    else if data.type = "BoxSet" or data.type = "Playlist" or data.type = "MusicVideo" or data.type = "ManualPlaylistsFolder" or data.type = "CollectionFolder"
         tmp = CreateObject("roSGNode", "CollectionData")
         tmp.image = PosterImage(data.id, imgParams)
         tmp.json = data
+
         return tmp
     else if data.type = "Season"
         tmp = CreateObject("roSGNode", "TVSeasonData")
@@ -385,6 +387,56 @@ end function
 function TVEpisodes(show_id as string, season_id as string)
     url = Substitute("Shows/{0}/Episodes", show_id)
     resp = APIRequest(url, { "seasonId": season_id, "UserId": get_setting("active_user"), "fields": "MediaStreams" })
+
+    data = getJson(resp)
+    results = []
+    for each item in data.Items
+        imgParams = { "AddPlayedIndicator": item.UserData.Played, "maxWidth": 400, "maxheight": 250 }
+        if item.UserData.PlayedPercentage <> invalid
+            param = { "PercentPlayed": item.UserData.PlayedPercentage }
+            imgParams.Append(param)
+        end if
+        tmp = CreateObject("roSGNode", "TVEpisodeData")
+        tmp.image = PosterImage(item.id, imgParams)
+        if tmp.image <> invalid
+            tmp.image.posterDisplayMode = "scaleToZoom"
+        end if
+        tmp.json = item
+        tmp.overview = ItemMetaData(item.id).overview
+        results.push(tmp)
+    end for
+    data.Items = results
+    return data
+end function
+
+function PlaylistsItems(playlist_id as string)
+    url = Substitute("Playlists/{0}/Items", playlist_id)
+    resp = APIRequest(url, { "UserId": get_setting("active_user"), "fields": "MediaStreams" })
+
+    data = getJson(resp)
+    results = []
+    for each item in data.Items
+        imgParams = { "AddPlayedIndicator": item.UserData.Played, "maxWidth": 400, "maxheight": 250 }
+        if item.UserData.PlayedPercentage <> invalid
+            param = { "PercentPlayed": item.UserData.PlayedPercentage }
+            imgParams.Append(param)
+        end if
+        tmp = CreateObject("roSGNode", "TVEpisodeData")
+        tmp.image = PosterImage(item.id, imgParams)
+        if tmp.image <> invalid
+            tmp.image.posterDisplayMode = "scaleToZoom"
+        end if
+        tmp.json = item
+        tmp.overview = ItemMetaData(item.id).overview
+        results.push(tmp)
+    end for
+    data.Items = results
+    return data
+end function
+
+function MusicVideoItems(musicVideo_id as string)
+    url = Substitute("Users/{0}/Items/", get_setting("active_user"))
+    resp = APIRequest(url, { "UserId": get_setting("active_user"), "parentId": musicVideo_id })
 
     data = getJson(resp)
     results = []

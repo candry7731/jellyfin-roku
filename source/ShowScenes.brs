@@ -453,6 +453,33 @@ function CreateSeasonDetailsGroup(series, season)
     return group
 end function
 
+function CreatePlaylistGroup(playlist_id)
+    group = CreateObject("roSGNode", "TVEpisodes")
+    group.optionsAvailable = false
+    m.global.sceneManager.callFunc("pushScene", group)
+    group.seasonData = ItemMetaData(playlist_id.id).json
+    group.objects = PlaylistsItems(playlist_id.id)
+
+    group.observeField("episodeSelected", m.port)
+    group.observeField("quickPlayNode", m.port)
+
+    return group
+end function
+
+function CreateMusicVideoItems(musicVideo_id)
+    group = CreateObject("roSGNode", "TVEpisodes")
+    group.optionsAvailable = false
+    m.global.sceneManager.callFunc("pushScene", group)
+    group.seasonData = ItemMetaData(musicVideo_id.id).json
+    group.objects = MusicVideoItems(musicVideo_id.id)
+
+    group.observeField("episodeSelected", m.port)
+    group.observeField("quickPlayNode", m.port)
+
+    return group
+end function
+
+
 function CreateSeasonDetailsGroupByID(seriesID, seasonID)
     group = CreateObject("roSGNode", "TVEpisodes")
     group.optionsAvailable = false
@@ -472,6 +499,7 @@ function CreateItemGrid(libraryItem)
     group.parentItem = libraryItem
     group.optionsAvailable = true
     group.observeField("selectedItem", m.port)
+    print "showscreen libraryItem: " libraryItem
     return group
 end function
 

@@ -18,7 +18,15 @@ sub updateSeason()
     imgParams = { "maxHeight": 450, "maxWidth": 300 }
     m.poster.uri = ImageURL(m.top.seasonData.Id, "Primary", imgParams)
     m.Random.visible = true
-    m.top.overhangTitle = m.top.seasonData.SeriesName + " - " + m.top.seasonData.name
+    m.playAll.visible = true
+    'set overhand title for playlist and music video collection folders
+    if m.top.seasonData.Type = "Playlist" or m.top.seasonData.Type = "CollectionFolder"
+        m.top.overhangTitle = m.top.seasonData.Name
+        m.poster.width = 450
+    else
+        m.top.overhangTitle = m.top.seasonData.SeriesName + " - " + m.top.seasonData.name
+    end if
+
 end sub
 
 function onKeyEvent(key as string, press as boolean) as boolean

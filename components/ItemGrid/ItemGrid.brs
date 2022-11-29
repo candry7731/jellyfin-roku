@@ -183,13 +183,24 @@ sub loadInitialItems()
         if get_user_setting("display.livetv.landing") = "guide" and m.options.view <> "livetv"
             showTvGuide()
         end if
-    else if m.top.parentItem.collectionType = "CollectionFolder" or m.top.parentItem.type = "CollectionFolder" or m.top.parentItem.collectionType = "boxsets" or m.top.parentItem.Type = "Boxset" or m.top.parentItem.Type = "Boxsets" or m.top.parentItem.Type = "Folder" or m.top.parentItem.Type = "Channel"
-        if m.voiceBox.text <> ""
-            m.loadItemsTask.recursive = true
-        else
-            ' non recursive for collections (folders, boxsets, photo albums, etc)
-            m.loadItemsTask.recursive = false
-        end if
+
+    else if m.top.parentItem.collectionType = "books"
+        m.loadItemsTask.recursive = false
+        m.loadItemsTask.itemId = m.top.parentItem.id
+    else if m.top.parentItem.collectionType = "playlists"
+        m.loadItemsTask.recursive = true
+        m.loadItemsTask.itemId = m.top.parentItem.id
+        m.itemGrid.itemSize = "[290, 290]"
+        m.itemGrid.itemSpacing = "[ 0, 20]"
+    else if m.top.parentItem.collectionType = "musicvideos"
+        m.loadItemsTask.recursive = false
+        m.loadItemsTask.itemId = m.top.parentItem.id
+    else if m.top.parentItem.collectionType = "CollectionFolder" or m.top.parentItem.type = "CollectionFolder" or m.top.parentItem.collectionType = "boxsets" or m.top.parentItem.Type = "Boxset" or m.top.parentItem.Type = "Folder" or m.top.parentItem.Type = "Channel"
+        ' Non-recursive, to not show subfolder contents
+        m.loadItemsTask.recursive = true
+        m.loadItemsTask.itemId = m.top.parentItem.parentFolder
+    else if m.top.parentItem.Type = "Channel"
+        m.top.imageDisplayMode = "scaleToFit"
     else if m.top.parentItem.json.type = "Studio"
         m.loadItemsTask.itemId = m.top.parentItem.parentFolder
         m.loadItemsTask.itemType = "Series,Movie"

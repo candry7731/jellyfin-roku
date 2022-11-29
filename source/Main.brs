@@ -103,10 +103,15 @@ sub Main (args as dynamic) as void
         else if isNodeEvent(msg, "selectedItem")
             ' If you select a library from ANYWHERE, follow this flow
             selectedItem = msg.getData()
-
-            m.selectedItemType = selectedItem.type
-            '
-            if selectedItem.type = "CollectionFolder"
+            print "selectedItem.json.Type: " selectedItem.json.Type
+            if selectedItem.json.Type = "Playlist"
+                group = CreatePlaylistGroup(selectedItem.json)
+                'sceneManager.callFunc("pushScene", group)
+            else if selectedItem.json.Type = "musicvideos"
+                group = CreateMusicVideoItems(selectedItem.json)
+            else if selectedItem.type = "CollectionFolder" or selectedItem.type = "UserView" or selectedItem.type = "Folder" or selectedItem.type = "Channel" or selectedItem.type = "Boxset"
+                m.selectedItemType = selectedItem.type
+                '
                 if selectedItem.collectionType = "movies"
                     group = CreateMovieLibraryView(selectedItem)
                 else
@@ -116,7 +121,7 @@ sub Main (args as dynamic) as void
             else if selectedItem.type = "Folder" and selectedItem.json.type = "Genre"
                 group = CreateMovieLibraryView(selectedItem)
                 sceneManager.callFunc("pushScene", group)
-            else if selectedItem.type = "UserView" or selectedItem.type = "Folder" or selectedItem.type = "Channel" or selectedItem.type = "Boxset"
+            else if selectedItem.type = "UserView" or selectedItem.type = "Folder" or selectedItem.type = "Channel" or selectedItem.type = "Boxset" or selectedItem.collectionType = "musicvideos"
                 group = CreateItemGrid(selectedItem)
                 sceneManager.callFunc("pushScene", group)
             else if selectedItem.type = "Episode"
@@ -430,6 +435,13 @@ sub Main (args as dynamic) as void
                 m.global.sceneManager.callFunc("deleteSceneAtIndex", 2)
             else if node.state = "finished"
                 node.control = "stop"
+                '
+                'Do Playlist autoPlayNextItem
+                if selectedItem.json.Type = "Playlist"
+
+                    autoPlayNextPlaylistItem(selectedItem.ID, itemNode.id)
+                    ' If node allows retrying using Transcode Url, give that shot
+                else if isValid(node.retryWithTranscoding) and node.retryWithTranscoding
 
                 ' If node allows retrying using Transcode Url, give that shot
                 if isValid(node.retryWithTranscoding) and node.retryWithTranscoding
