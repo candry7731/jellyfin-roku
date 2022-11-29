@@ -191,10 +191,12 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     if meta.live
         video.content.live = true
         video.content.StreamFormat = "hls"
+        video.enableDecoderStats = true
+        video.enableRenderTracking = true
     end if
 
     video.container = getContainerType(meta)
-
+    print meta.json
     if m.playbackInfo.MediaSources[0] = invalid
         m.playbackInfo = meta.json
     end if
@@ -223,8 +225,8 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     ' artifacts. If the user preference is set, and the only reason the server says we need to
     ' transcode is that the Envoding Level is not supported, then try to direct play but silently
     ' fall back to the transcode if that fails.
-    if meta.live = false and get_user_setting("playback.tryDirect.h264ProfileLevel") = "true" and m.playbackInfo.MediaSources[0].TranscodingUrl <> invalid and forceTranscoding = false and m.playbackInfo.MediaSources[0].MediaStreams[0].codec = "h264"
-        transcodingReasons = getTranscodeReasons(m.playbackInfo.MediaSources[0].TranscodingUrl)
+    if meta.live = false and get_user_setting("playback.tryDirect.h264ProfileLevel") = "true" and playbackInfo.MediaSources[0].TranscodingUrl <> invalid and forceTranscoding = false and playbackInfo.MediaSources[0].MediaStreams[0].codec = "h264"
+        transcodingReasons = getTranscodeReasons(playbackInfo.MediaSources[0].TranscodingUrl)
         if transcodingReasons.Count() = 1 and transcodingReasons[0] = "VideoLevelNotSupported"
             video.directPlaySupported = true
             video.transcodeAvailable = true

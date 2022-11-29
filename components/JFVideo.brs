@@ -91,6 +91,11 @@ end sub
 
 ' When Video Player state changes
 sub onPositionChanged()
+    print " Download sequence: " m.top.downloadedSegment.segSequence
+    print " Download Start:" m.top.downloadedSegment.segStartTime
+    print "duration" m.top.downloadedSegment.segDuration / 1000
+    print "url:" m.top.downloadedSegment.SegUrl
+
     ' Check if dialog is open
     m.dialog = m.top.getScene().findNode("dialogBackground")
     if not isValid(m.dialog)
@@ -124,6 +129,7 @@ sub onState(msg)
         m.top.control = "stop"
         m.top.backPressed = true
     else if m.top.state = "playing"
+        print "streaming start: "m.top.streamingSegment.segStartTime
 
         ' Check if next episde is available
         if isValid(m.top.showID)
