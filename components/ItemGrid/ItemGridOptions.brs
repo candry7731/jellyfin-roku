@@ -5,8 +5,9 @@ sub init()
     m.buttons.selectedIndex = 1
     m.buttons.setFocus(true)
 
-    m.favoriteMenu = m.top.findNode("favoriteMenu")
+    m.favoriteButton = m.top.findNode("favoriteButton")
     m.selectedFavoriteItem = m.top.findNode("selectedFavoriteItem")
+    m.selectedDeletedItem = m.top.findNode("selectedDeletedItem")
 
     m.selectedSortIndex = 0
     m.selectedItem = 1
@@ -26,7 +27,7 @@ sub init()
     m.fadeInAnimOpacity = m.top.findNode("inOpacity")
 
     m.buttons.observeField("focusedIndex", "buttonFocusChanged")
-    m.favoriteMenu.observeField("buttonSelected", "toggleFavorite")
+    m.favoriteButton.observeField("buttonSelected", "toggleFavorite")
 end sub
 
 
@@ -117,7 +118,7 @@ sub buttonFocusChanged()
             m.buttons.setFocus(false)
             m.menus[m.selectedItem].setFocus(false)
             m.menus[m.selectedItem].visible = false
-            m.favoriteMenu.setFocus(true)
+            m.favoriteButton.setFocus(true)
         end if
     end if
     m.fadeOutAnimOpacity.fieldToInterp = m.menus[m.selectedItem].id + ".opacity"
@@ -128,16 +129,16 @@ end sub
 
 sub toggleFavorite()
     m.favItemsTask = createObject("roSGNode", "FavoriteItemsTask")
-    if m.favoriteMenu.iconUri = "pkg:/images/icons/favorite.png"
-        m.favoriteMenu.iconUri = "pkg:/images/icons/favorite_selected.png"
-        m.favoriteMenu.focusedIconUri = "pkg:/images/icons/favorite_selected.png"
+    if m.favoriteButton.iconUri = "pkg:/images/icons/favorite.png"
+        m.favoriteButton.iconUri = "pkg:/images/icons/favorite_selected.png"
+        m.favoriteButton.focusedIconUri = "pkg:/images/icons/favorite_selected.png"
         ' Run the task to actually favorite it via API
         m.favItemsTask.favTask = "Favorite"
         m.favItemsTask.itemId = m.selectedFavoriteItem.id
         m.favItemsTask.control = "RUN"
     else
-        m.favoriteMenu.iconUri = "pkg:/images/icons/favorite.png"
-        m.favoriteMenu.focusedIconUri = "pkg:/images/icons/favorite.png"
+        m.favoriteButton.iconUri = "pkg:/images/icons/favorite.png"
+        m.favoriteButton.focusedIconUri = "pkg:/images/icons/favorite.png"
         m.favItemsTask.favTask = "Unfavorite"
         m.favItemsTask.itemId = m.selectedFavoriteItem.id
         m.favItemsTask.control = "RUN"
@@ -149,9 +150,9 @@ end sub
 sub setHeartColor(color as string)
     try
         for i = 0 to 6
-            node = m.favoriteMenu.getChild(i)
+            node = m.favoriteButton.getChild(i)
             if node <> invalid and node.uri <> invalid and node.uri = "pkg:/images/icons/favorite_selected.png"
-                m.favoriteMenu.getChild(i).blendColor = color
+                m.favoriteButton.getChild(i).blendColor = color
             end if
         end for
     catch e
@@ -165,13 +166,13 @@ sub saveFavoriteItemSelected(msg)
     ' Favorite button
     if m.selectedFavoriteItem <> invalid
         if m.selectedFavoriteItem.favorite = true
-            m.favoriteMenu.iconUri = "pkg:/images/icons/favorite_selected.png"
-            m.favoriteMenu.focusedIconUri = "pkg:/images/icons/favorite_selected.png"
+            m.favoriteButton.iconUri = "pkg:/images/icons/favorite_selected.png"
+            m.favoriteButton.focusedIconUri = "pkg:/images/icons/favorite_selected.png"
             ' Make sure we set the Favorite Heart color for the appropriate child
             setHeartColor("#cc3333")
         else
-            m.favoriteMenu.iconUri = "pkg:/images/icons/favorite.png"
-            m.favoriteMenu.focusedIconUri = "pkg:/images/icons/favorite.png"
+            m.favoriteButton.iconUri = "pkg:/images/icons/favorite.png"
+            m.favoriteButton.focusedIconUri = "pkg:/images/icons/favorite.png"
             ' Make sure we set the Favorite Heart color for the appropriate child
             setHeartColor("#cc3333")
         end if
@@ -194,8 +195,8 @@ function onKeyEvent(key as string, press as boolean) as boolean
 
         return true
     else if key = "left"
-        if m.favoriteMenu.hasFocus()
-            m.favoriteMenu.setFocus(false)
+        if m.favoriteButton.hasFocus()
+            m.favoriteButton.setFocus(false)
             m.menus[m.selectedItem].visible = true
             m.buttons.setFocus(true)
         end if

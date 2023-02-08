@@ -15,8 +15,9 @@
           </RadiobuttonList>
         </Group>
       </LayoutGroup>
-      <ButtonGroup translation="[1250,50]">
-        <Button id="favoriteMenu" iconUri="pkg:/images/icons/favorite.png" focusedIconUri="pkg:/images/icons/favorite.png" focusBitmapUri="" focusFootprintBitmapUri="" text="Favorite" showFocusFootprint="false"></Button>
+      <ButtonGroup id="extrabuttons" translation="[1250,50]">
+        <Button id="favoriteButton" iconUri="pkg:/images/icons/favorite.png" focusedIconUri="pkg:/images/icons/favorite.png" focusBitmapUri="" focusFootprintBitmapUri="" text="Favorite" showFocusFootprint="false"></Button>
+        <Button id="deleteMenu" iconUri="pkg:/images/icons/garbage_white.png" focusedIconUri="pkg:/images/icons/garbage_red.png" focusBitmapUri="" focusFootprintBitmapUri="" text="Delete" showFocusFootprint="false"></Button>
       </ButtonGroup>
     </Group>
 
@@ -30,6 +31,8 @@
     <field id="buttons" type="nodearray" />
     <field id="options" type="assocarray" onChange="optionsSet" />
     <field id="selectedFavoriteItem" type="node" onChange="saveFavoriteItemSelected" />
+    <field id="selectedDeletedItem" type="node" onChange="saveDeletedItem" />
+
 
     <field id="view" type="string" />
     <field id="sortField" type="string" value="SortName" />
