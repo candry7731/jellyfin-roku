@@ -11,6 +11,13 @@ function UnmarkItemFavorite(id as string)
     return getJson(resp)
 end function
 
+function DeleteItem(id as string)
+    url = Substitute("Items/{1}", get_setting("active_user"), id)
+    resp = APIRequest(url)
+    resp.setRequest("DELETE")
+    return getJson(resp)
+end function
+
 sub MarkItemWatched(id as string)
     date = CreateObject("roDateTime")
     dateStr = date.ToISOString()

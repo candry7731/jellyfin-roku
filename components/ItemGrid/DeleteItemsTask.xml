@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<component name="DeleteItemsTask" extends="Task">
+  <interface>
+    <field id="itemId" type="string" />
+    <field id="deleteTask" type="string" value="" />
+  </interface>
+  <script type="text/brightscript" uri="DeleteItemsTask.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api/UserLibrary.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api/baserequest.brs" />
+  <script type="text/brightscript" uri="pkg:/source/utils/config.brs" />
+</component>
