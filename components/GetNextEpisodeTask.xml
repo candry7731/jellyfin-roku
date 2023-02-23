@@ -5,6 +5,7 @@
         <field id="videoID" type="string" />
         <field id="showID" type="string" />
         <field id="nextEpisodeData" type="assocarray" />
+        <field id="imageArray" type="assocarray" />
     </interface>
     <script type="text/brightscript" uri="GetNextEpisodeTask.brs" />
     <script type="text/brightscript" uri="pkg:/source/utils/config.brs" />

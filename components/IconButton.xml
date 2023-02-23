@@ -4,11 +4,13 @@
     <Poster id="buttonBackground" uri="pkg:/images/white.9.png" />
     <Poster id="buttonIcon" />
     <Label id="buttonText" color="#aaaaaa" font="font:SmallestSystemFont" horizAlign="center" />
+    <ScrollingLabel id="buttonSubText" color="#aaaaaa" font="font:SmallestSystemFont" horizAlign="center" repeatCount="-1" />
   </children>
   <interface>
     <field id="background" type="color" value="" />
     <field id="focusBackground" type="color" value="" />
     <field id="text" type="string" value="" />
+    <field id="subText" type="string" value="" />
     <field id="padding" type="integer" value="-1" />
     <field id="height" type="integer" value="" />
     <field id="width" type="integer" value="" />

@@ -37,19 +37,23 @@
   </interface>
   <script type="text/brightscript" uri="JFVideo.brs" />
   <script type="text/brightscript" uri="pkg:/source/utils/misc.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api/Image.brs" />
   <script type="text/brightscript" uri="pkg:/source/utils/config.brs" />
   <script type="text/brightscript" uri="pkg:/source/roku_modules/api/api.brs" />
+  <script type="text/brightscript" uri="pkg:/source/api/baserequest.brs" />
+
 
   <children>
     <timer id="playbackTimer" repeat="true" duration="30" />
     <timer id="bufferCheckTimer" repeat="true" />
-    <JFButton id="nextEpisode" opacity="0" textColor="#f0f0f0" focusedTextColor="#202020" focusFootprintBitmapUri="pkg:/images/option-menu-bg.9.png" focusBitmapUri="pkg:/images/white.9.png" translation="[1500, 900]" />
+    <Label id="buttonText" color="#f0f0f0" font="font:MediumSystemFont" horizAlign="center" translation="[1500, 555]"/>
+    <IconButton id="nextEpisode" subText="" height="330" width= "330" opacity="0"  icon=""  translation="[1500, 600]" background="#070707" focusBackground="#00a4dc"  />
     <ButtonGroupHoriz id="buttons" itemSpacings="[20]" translation = "[95,950]">
-      <IconButton id="guide" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/guide-default.png" text="Guide" height="85" width="150" />
-      <IconButton id="info" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/info-default.png" text="Info" height="85" width="150" />
-      <IconButton id="cc" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/cc-default.png" text="CC" height="85" width="150" />
-      <IconButton id="cast" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/cast-default.png" text="Cast" height="85" width="150" />
-      <IconButton id="playbackInfo" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/playbackInfo-default.png" text="Stream Info" height="85" width="150" />
+      <IconButton id="guide" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/guide-default.png" text="Guide" height="85" width="180" />
+      <IconButton id="info" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/info-default.png" text="Info" height="85" width="180" />
+      <IconButton id="cc" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/cc-default.png" text="CC" height="85" width="180" />
+      <IconButton id="cast" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/cast-default.png" text="Cast" height="85" width="180" />
+      <IconButton id="playbackInfo" background="#070707" focusBackground="#00a4dc" padding="35" icon="pkg:/images/icons/playbackInfo-default.png" text="Stream Info" height="85" width="180" />
     </ButtonGroupHoriz>
 
     <!-- "Cast and Crew" row -->

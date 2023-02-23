@@ -2,10 +2,12 @@ sub init()
     m.buttonBackground = m.top.findNode("buttonBackground")
     m.buttonIcon = m.top.findNode("buttonIcon")
     m.buttonText = m.top.findNode("buttonText")
+    m.buttonSubText = m.top.findNode("buttonSubText")
 
     m.top.observeField("background", "onBackgroundChanged")
     m.top.observeField("icon", "onIconChanged")
     m.top.observeField("text", "onTextChanged")
+    m.top.observeField("subText", "onSubTextChanged")
     m.top.observeField("height", "onHeightChanged")
     m.top.observeField("width", "onWidthChanged")
     m.top.observeField("padding", "onPaddingChanged")
@@ -33,6 +35,10 @@ sub onTextChanged()
     m.buttonText.text = m.top.text
 end sub
 
+sub onSubTextChanged()
+    m.buttonSubText.text = m.top.subText
+end sub
+
 sub setIconSize()
     height = m.buttonBackground.height
     width = m.buttonBackground.width
@@ -49,6 +55,8 @@ sub setIconSize()
         m.buttonIcon.translation = [((width - m.buttonIcon.width) / 2), ((height - m.buttonIcon.height) / 2)]
         m.buttonText.translation = [0, height + 10]
         m.buttonText.width = width
+        m.buttonSubText.translation = [0, height + 45]
+        m.buttonSubText.Maxwidth = width
     end if
 end sub
 

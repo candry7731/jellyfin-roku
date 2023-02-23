@@ -22,9 +22,12 @@ sub init()
 
     'Play Next Episode button
     m.nextEpisodeButton = m.top.findNode("nextEpisode")
-    m.nextEpisodeButton.text = tr("Next Episode")
     m.nextEpisodeButton.setFocus(false)
     m.nextupbuttonseconds = get_user_setting("playback.nextupbuttonseconds", "30")
+    m.buttonText = m.top.findnode("buttonText")
+    m.buttonText.visible = false
+    m.buttonText.text = tr("Next Episode in")
+
 
     m.showNextEpisodeButtonAnimation = m.top.findNode("showNextEpisodeButton")
     m.hideNextEpisodeButtonAnimation = m.top.findNode("hideNextEpisodeButton")
@@ -51,6 +54,7 @@ sub shownextEpisode()
         m.shownextEpisodeButtonAnimation.control = "start"
         m.nextEpisodeButton.setFocus(true)
         m.nextEpisodeButton.visible = true
+        m.buttonText.visible = true
     end if
 end sub
 
@@ -70,6 +74,19 @@ sub onNextEpisodeDataLoaded()
     if m.getNextEpisodeTask.nextEpisodeData.Items.count() = 2
         m.top.observeField("position", "onPositionChanged")
         m.checkedForNextEpisode = true
+        'Set next episode image
+        imgParams = { "maxHeight": 330, "maxWidth": 330, "quality": 90 }
+        if m.getNextEpisodeTask.imageArray <> invalid
+            m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
+
+        else ' episode button is missing so reset to noraml button
+            m.nextEpisodeButton.height = 100
+            m.nextEpisodeButton.width = 330
+            m.buttonText.translation = "[1500, 855]"
+            m.nextEpisodeButton.translation = "[1500, 900]"
+        end if
+        m.nextEpisodeButton.subText = m.getNextEpisodeTask.nextEpisodeData.Items[1].Name
+        m.nextEpisodeButton.text = tr("Episode") + " " + m.getNextEpisodeTask.nextEpisodeData.Items[1].IndexNumber.tostr()
     else ' No Next episode found, remove position observer
         m.top.unobserveField("position")
         m.checkedForNextEpisode = true
@@ -84,6 +101,7 @@ sub showNextEpisodeButton()
         m.showNextEpisodeButtonAnimation.control = "start"
         m.nextEpisodeButton.setFocus(true)
         m.nextEpisodeButton.visible = true
+        m.buttonText.visible = true
     end if
 end sub
 
@@ -94,16 +112,19 @@ sub hidenextEpisode()
     m.hidenextEpisodeButtonAnimation.control = "start"
     m.nextEpisodeButton.setFocus(false)
     m.top.setFocus(true)
+    m.buttonText.visible = false
+    m.buttonText.visible = false
 end sub
 
 
 sub handleNextEpisode()
     ' Dialog box is open
-    if int(m.top.position) >= (m.top.runTime - 30)
+    if int(m.top.position) >= (m.top.runTime)' - 30)
         shownextEpisode()
         updateCount()
     else
         m.nextEpisodeButton.visible = false
+        m.buttonText.visible = false
         m.nextEpisodeButton.setFocus(false)
         m.top.setFocus(true)
     end if
@@ -116,7 +137,7 @@ sub updateCount()
     if nextEpisodeCountdown < 0
         nextEpisodeCountdown = 0
     end if
-    m.nextEpisodeButton.text = tr("Next Episode") + " " + nextEpisodeCountdown.toStr()
+    m.buttonText.text = tr("Next Episode in") + " " + nextEpisodeCountdown.toStr()
 end sub
 
 '
@@ -135,7 +156,7 @@ sub checkTimeToDisplayNextEpisode()
         return
     end if
 
-    if int(m.top.position) >= (m.top.runTime - Val(m.nextupbuttonseconds))
+    if int(m.top.position) <= (m.top.runTime)' - Val(m.nextupbuttonseconds))
         showNextEpisodeButton()
         updateCount()
         return
@@ -143,6 +164,7 @@ sub checkTimeToDisplayNextEpisode()
 
     if m.nextEpisodeButton.visible or m.nextEpisodeButton.hasFocus()
         m.nextEpisodeButton.visible = false
+        m.buttonText. visible = false
         m.nextEpisodeButton.setFocus(false)
     end if
 end sub
@@ -440,6 +462,7 @@ function onKeyEvent(key as string, press as boolean) as boolean
     else
         'Hide Next Episode Button
         m.nextEpisodeButton.visible = false
+        m.buttonText.visible = false
         m.nextEpisodeButton.setFocus(false)
         m.top.setFocus(true)
     end if
