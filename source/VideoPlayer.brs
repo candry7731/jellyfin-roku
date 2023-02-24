@@ -25,6 +25,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     video.content = createObject("RoSGNode", "ContentNode")
     stopLoadingSpinner()
     meta = ItemMetaData(video.id)
+    print "playbackPosition: " playbackPosition
     if meta = invalid
         video.content = invalid
         return
@@ -56,6 +57,9 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     end if
     if m.videotype = "Movie"
         video.content.contenttype = "movie"
+        if isValid(meta.json.RunTimeTicks)
+            video.runTime = (meta.json.RunTimeTicks / 10000000.0)
+        end if
     end if
 
     video.content.title = meta.title
@@ -87,31 +91,48 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
                     video.content = invalid
                     return
                 else if dialogResult = 3
-                    'get series ID based off episiode ID
-                    params = {
-                        ids: video.Id
-                    }
-                    url = Substitute("Users/{0}/Items/", get_setting("active_user"))
-                    resp = APIRequest(url, params)
-                    data = getJson(resp)
-                    for each item in data.Items
-                        m.series_id = item.SeriesId
-                    end for
-                    'Get series json data
-                    params = {
-                        ids: m.series_id
-                    }
-                    url = Substitute("Users/{0}/Items/", get_setting("active_user"))
-                    resp = APIRequest(url, params)
-                    data = getJson(resp)
-                    for each item in data.Items
-                        m.tmp = item
-                    end for
-                    stopLoadingSpinner()
-                    'Create Series Scene
-                    CreateSeriesDetailsGroup(m.tmp)
-                    video.content = invalid
-                    return
+                    'create movie scene
+                    if m.videotype = "Movie"
+                        params = {
+                            ids: video.Id
+                        }
+                        url = Substitute("Users/{0}/Items/", get_setting("active_user"))
+                        resp = APIRequest(url, params)
+                        data = getJson(resp)
+                        for each item in data.Items
+                            m.tmp = item
+                        end for
+                        stopLoadingSpinner()
+                        CreateMovieDetailsGroup(m.tmp)
+                        return
+                    else
+                        'get series ID based off episiode ID
+                        params = {
+                            ids: video.Id
+                        }
+                        url = Substitute("Users/{0}/Items/", get_setting("active_user"))
+                        resp = APIRequest(url, params)
+                        data = getJson(resp)
+                        for each item in data.Items
+                            m.series_id = item.SeriesId
+                        end for
+                        'Get series json data
+                        params = {
+                            ids: m.series_id
+                        }
+                        url = Substitute("Users/{0}/Items/", get_setting("active_user"))
+                        resp = APIRequest(url, params)
+                        data = getJson(resp)
+                        for each item in data.Items
+                            m.tmp = item
+                        end for
+                        stopLoadingSpinner()
+                        'Create Series Scene
+
+                        CreateSeriesDetailsGroup(m.tmp)
+                        video.content = invalid
+                        return
+                    end if
 
                 else if dialogResult = 4
                     'get Season/Series ID based off episiode ID
@@ -171,7 +192,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
             end if
         end if
     end if
-
+    print video.content
     ' Don't attempt to play an intro for an intro video
     if showIntro
         ' Do not play intros when resuming playback
@@ -184,6 +205,7 @@ sub AddVideoContent(video, mediaSourceId, audio_stream_idx = 1, subtitle_idx = -
     end if
 
     video.content.PlayStart = int(playbackPosition / 10000000)
+    print video.content.PlayStart
 
     ' Call PlayInfo from server
     if mediaSourceId = invalid
@@ -387,7 +409,7 @@ function startPlayBackOver(time as longinteger) as integer
     if m.scene.focusedChild.focusedChild.overhangTitle = tr("Home") and (m.videotype = "Episode" or m.videotype = "Series")
         return option_dialog([tr("Resume playing at ") + ticksToHuman(time) + ".", tr("Start over from the beginning."), tr("Watched"), tr("Go to series"), tr("Go to season"), tr("Go to episode")])
     else
-        return option_dialog(["Resume playing at " + ticksToHuman(time) + ".", "Start over from the beginning."])
+        return option_dialog(["Resume playing at " + ticksToHuman(time) + ".", "Start over from the beginning.", tr("Watched"), tr("Go to Details")])
     end if
 end function
 
@@ -429,7 +451,6 @@ function getContainerType(meta as object) as string
     else if container = "m4v" or container = "mov"
         container = "mp4"
     end if
-
     return container
 end function
 

@@ -191,9 +191,12 @@ sub Main (args as dynamic) as void
                 group = CreateSeriesDetailsGroup(selectedItem.json)
             else if selectedItem.type = "Season"
                 group = CreateSeasonDetailsGroupByID(selectedItem.json.SeriesId, selectedItem.id)
-            else if selectedItem.type = "Movie"
+            else if selectedItem.type = "Movie" and selectedItem.json.UserData.PlayedPercentage = invalid
                 ' open movie detail page
                 group = CreateMovieDetailsGroup(selectedItem)
+            else if selectedItem.type = "Movie"
+                ' prompt movie playback options
+                video = CreateVideoPlayerGroup(selectedItem.id)
             else if selectedItem.type = "Person"
                 CreatePersonView(selectedItem)
             else if selectedItem.type = "TvChannel" or selectedItem.type = "Video" or selectedItem.type = "Program"
