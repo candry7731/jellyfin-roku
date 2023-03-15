@@ -6,7 +6,7 @@
         <name>default</name>
         <message>
             <source>192.168.1.100:8096 or https://example.com/jellyfin</source>
-            <translation>default192.168.1.100:8096 or https://example.com/jellyfin</translation>
+            <translation>192.168.1.100:8096 or https://example.com/jellyfin</translation>
         </message>
         <message>
             <source>Cancel</source>
@@ -870,6 +870,16 @@
             <extracomment>Popup message when we find no audio data for an artist</extracomment>
         </message>
         <message>
+            <source>Custom Subtitles</source>
+            <translation>Custom Subtitles</translation>
+            <extracomment>Name of a setting - custom subtitles that support CJK fonts</extracomment>
+        </message>
+        <message>
+            <source>Replace Roku's default subtitle functions with custom functions that support CJK fonts. Fallback fonts must be configured and enabled on the server for CJK rendering to work.</source>
+            <translation>Replace Roku's default subtitle functions with custom functions that support CJK fonts. Fallback fonts must be configured and enabled on the server for CJK rendering to work.</translation>
+            <extracomment>Description of a setting - custom subtitles that support CJK fonts</extracomment>
+        </message>
+        <message>
             <source>Guide</source>
             <translation>Guide</translation>
             <extracomment>Trickplaybar button, Guide</extracomment>
@@ -939,9 +949,14 @@
             <extracomment>Settings Menu - Title for option</extracomment>
         </message>
         <message>
-            <source>Support Direct Play of MPEG-4 content. This may need to be disabled for playback of DIVX encoded video files.</source>
-            <translation>Support Direct Play of MPEG-4 content. This may need to be disabled for playback of DIVX encoded video files.</translation>
-            <extracomment>Settings Menu - Description for option</extracomment>
+            <source>Parental Ratings</source>
+            <translation>Parental Ratings</translation>
+            <extracomment>Used in Filter menu</extracomment>
+        </message>
+        <message>
+            <source>Years</source>
+            <translation>Years</translation>
+            <extracomment>Used in Filter menu</extracomment>
         </message>
         <message>
             <source>Show What's New Popup</source>
@@ -994,14 +1009,6 @@
             <source>Default view for Movie Libraries.</source>
             <translation>Default view for Movie Libraries.</translation>
             <extracomment>Settings Menu - Description for option</extracomment>
-        </message>
-        <message>
-            <source>Movies (Presentation)</source>
-            <translation>Movies (Presentation)</translation>
-        </message>
-        <message>
-            <source>Movies (Grid)</source>
-            <translation>Movies (Grid)</translation>
         </message>
         <message>
             <source>Item Titles</source>
@@ -1159,4 +1166,3 @@
         </message>
     </context>
 </TS>
-
