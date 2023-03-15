@@ -78,7 +78,6 @@ sub onNextEpisodeDataLoaded()
         imgParams = { "maxHeight": 330, "maxWidth": 330, "quality": 90 }
         if m.getNextEpisodeTask.imageArray <> invalid
             m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
-
         else ' episode button is missing so reset to noraml button
             m.nextEpisodeButton.height = 100
             m.nextEpisodeButton.width = 330

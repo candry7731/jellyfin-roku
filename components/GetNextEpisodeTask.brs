@@ -16,6 +16,5 @@ sub getNextEpisodeTask()
 end sub
 sub getEpisodeImageTask()
     m.image = api_API().items.getimages(m.nextEpisodeData.Items[1].Id)
-    print "image: " m.image
     m.top.imageArray = m.image
 end sub
