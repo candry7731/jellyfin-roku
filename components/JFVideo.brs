@@ -74,11 +74,12 @@ sub onNextEpisodeDataLoaded()
     if m.getNextEpisodeTask.nextEpisodeData.Items.count() = 2
         m.top.observeField("position", "onPositionChanged")
         m.checkedForNextEpisode = true
-        'Set next episode image
+        'check and Set next episode image
         imgParams = { "maxHeight": 330, "maxWidth": 330, "quality": 90 }
         if m.getNextEpisodeTask.imageArray <> invalid
             m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
-        else ' episode button is missing so reset to noraml button
+
+        else ' episode button is missing so reset to normal button
             m.nextEpisodeButton.height = 100
             m.nextEpisodeButton.width = 330
             m.buttonText.translation = "[1500, 855]"
@@ -115,20 +116,6 @@ sub hidenextEpisode()
     m.buttonText.visible = false
 end sub
 
-
-sub handleNextEpisode()
-    ' Dialog box is open
-    if int(m.top.position) >= (m.top.runTime)' - 30)
-        shownextEpisode()
-        updateCount()
-    else
-        m.nextEpisodeButton.visible = false
-        m.buttonText.visible = false
-        m.nextEpisodeButton.setFocus(false)
-        m.top.setFocus(true)
-    end if
-end sub
-
 '
 'Update count down text
 sub updateCount()
@@ -155,7 +142,7 @@ sub checkTimeToDisplayNextEpisode()
         return
     end if
 
-    if int(m.top.position) <= (m.top.runTime)' - Val(m.nextupbuttonseconds))
+    if int(m.top.position) >= (m.top.runTime - Val(m.nextupbuttonseconds))
         showNextEpisodeButton()
         updateCount()
         return
@@ -236,7 +223,6 @@ sub onState(msg)
             m.buttonGrp.removeChild(m.top.findNode("cast"))
             m.buttonGrp.removeChild(m.top.findNode("cc"))
             m.getItemQueryTask.live = "true"
-            print "m.top.id" m.top.id
             m.getItemQueryTask.videoID = m.top.id
             m.getItemQueryTask.control = "RUN"
             setupButtons()
