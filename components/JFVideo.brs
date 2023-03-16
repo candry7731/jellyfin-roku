@@ -17,9 +17,11 @@ sub init()
 
     'Play Next Episode button
     m.nextEpisodeButton = m.top.findNode("nextEpisode")
-    m.nextEpisodeButton.text = tr("Next Episode")
     m.nextEpisodeButton.setFocus(false)
     m.nextupbuttonseconds = get_user_setting("playback.nextupbuttonseconds", "30")
+    m.buttonText = m.top.findnode("buttonText")
+    m.buttonText.visible = false
+    m.buttonText.text = tr("Next Episode in")
 
     m.showNextEpisodeButtonAnimation = m.top.findNode("showNextEpisodeButton")
     m.hideNextEpisodeButtonAnimation = m.top.findNode("hideNextEpisodeButton")
@@ -68,17 +70,6 @@ sub updateCaption ()
     m.captionGroup.appendChildren(m.captionTask.currentCaption)
 end sub
 
-'
-' Runs Next Episode button animation and sets focus to button
-sub shownextEpisode()
-    if m.nextEpisodeButton.hasFocus() = false
-        m.shownextEpisodeButtonAnimation.control = "start"
-        m.nextEpisodeButton.setFocus(true)
-        m.nextEpisodeButton.visible = true
-        m.buttonText.visible = true
-    end if
-end sub
-
 ' Event handler for when video content field changes
 sub onContentChange()
     if not isValid(m.top.content) then return
@@ -89,11 +80,12 @@ sub onNextEpisodeDataLoaded()
     if m.getNextEpisodeTask.nextEpisodeData.Items.count() = 2
         m.top.observeField("position", "onPositionChanged")
         m.checkedForNextEpisode = true
+        print m.getNextEpisodeTask.imageArray
         'check and Set next episode image
         imgParams = { "maxHeight": 330, "maxWidth": 330, "quality": 90 }
         if m.getNextEpisodeTask.imageArray <> invalid
             m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
-
+            print m.nextEpisodeButton.icon
         else ' episode button is missing so reset to normal button
             m.nextEpisodeButton.height = 100
             m.nextEpisodeButton.width = 330
@@ -106,12 +98,6 @@ sub onNextEpisodeDataLoaded()
         m.top.unobserveField("position")
         m.checkedForNextEpisode = true
     end if
-end sub
-
-sub onNextEpisodeDataLoaded()
-    m.checkedForNextEpisode = true
-
-    m.top.observeField("position", "onPositionChanged")
 end sub
 
 '
@@ -133,7 +119,6 @@ sub hidenextEpisode()
     m.nextEpisodeButton.setFocus(false)
     m.top.setFocus(true)
     m.buttonText.visible = false
-    m.buttonText.visible = false
 end sub
 
 '
@@ -143,7 +128,7 @@ sub updateCount()
     if nextEpisodeCountdown < 0
         nextEpisodeCountdown = 0
     end if
-    m.nextEpisodeButton.text = tr("Next Episode") + " " + nextEpisodeCountdown.toStr()
+    m.buttonText.text = tr("Next Episode in") + " " + nextEpisodeCountdown.toStr()
 end sub
 
 '
