@@ -10,4 +10,12 @@ sub getNextEpisodeTask()
     })
 
     m.top.nextEpisodeData = m.nextEpisodeData
+    if m.nextEpisodeData.TotalRecordCount > 1
+        getEpisodeImageTask()
+    end if
+end sub
+
+sub getEpisodeImageTask()
+    m.image = api_API().items.getimages(m.nextEpisodeData.Items[1].Id)
+    m.top.imageArray = m.image
 end sub

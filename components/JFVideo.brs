@@ -68,12 +68,44 @@ sub updateCaption ()
     m.captionGroup.appendChildren(m.captionTask.currentCaption)
 end sub
 
+'
+' Runs Next Episode button animation and sets focus to button
+sub shownextEpisode()
+    if m.nextEpisodeButton.hasFocus() = false
+        m.shownextEpisodeButtonAnimation.control = "start"
+        m.nextEpisodeButton.setFocus(true)
+        m.nextEpisodeButton.visible = true
+        m.buttonText.visible = true
+    end if
+end sub
+
 ' Event handler for when video content field changes
 sub onContentChange()
     if not isValid(m.top.content) then return
-
     m.top.observeField("position", "onPositionChanged")
+end sub
 
+sub onNextEpisodeDataLoaded()
+    if m.getNextEpisodeTask.nextEpisodeData.Items.count() = 2
+        m.top.observeField("position", "onPositionChanged")
+        m.checkedForNextEpisode = true
+        'check and Set next episode image
+        imgParams = { "maxHeight": 330, "maxWidth": 330, "quality": 90 }
+        if m.getNextEpisodeTask.imageArray <> invalid
+            m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
+
+        else ' episode button is missing so reset to normal button
+            m.nextEpisodeButton.height = 100
+            m.nextEpisodeButton.width = 330
+            m.buttonText.translation = "[1500, 855]"
+            m.nextEpisodeButton.translation = "[1500, 900]"
+        end if
+        m.nextEpisodeButton.subText = m.getNextEpisodeTask.nextEpisodeData.Items[1].Name
+        m.nextEpisodeButton.text = tr("Episode") + " " + m.getNextEpisodeTask.nextEpisodeData.Items[1].IndexNumber.tostr()
+    else ' No Next episode found, remove position observer
+        m.top.unobserveField("position")
+        m.checkedForNextEpisode = true
+    end if
 end sub
 
 sub onNextEpisodeDataLoaded()
@@ -91,6 +123,17 @@ sub showNextEpisodeButton()
         m.nextEpisodeButton.setFocus(true)
         m.nextEpisodeButton.visible = true
     end if
+end sub
+
+'
+' Runs hide Next Episode button animation and sets focus back to video
+sub hidenextEpisode()
+    'm.top.trickPlayBar.unobserveField("visible")
+    m.hidenextEpisodeButtonAnimation.control = "start"
+    m.nextEpisodeButton.setFocus(false)
+    m.top.setFocus(true)
+    m.buttonText.visible = false
+    m.buttonText.visible = false
 end sub
 
 '
