@@ -22,6 +22,8 @@ sub init()
     m.buttonText = m.top.findnode("buttonText")
     m.buttonText.visible = false
     m.buttonText.text = tr("Next Episode in")
+    m.backdrop = m.top.findNode("backdrop")
+    'm.backdrop.visible = false
 
     m.showNextEpisodeButtonAnimation = m.top.findNode("showNextEpisodeButton")
     m.hideNextEpisodeButtonAnimation = m.top.findNode("hideNextEpisodeButton")
@@ -79,13 +81,10 @@ end sub
 sub onNextEpisodeDataLoaded()
     if m.getNextEpisodeTask.nextEpisodeData.Items.count() = 2
         m.top.observeField("position", "onPositionChanged")
-        'm.checkedForNextEpisode = true
-        print m.getNextEpisodeTask.imageArray
         'check and Set next episode image
         imgParams = { "maxHeight": 660, "maxWidth": 660, "quality": 90 }
         if m.getNextEpisodeTask.imageArray <> invalid
             m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
-            'print m.getNextEpisodeTask.imageArray
         else ' episode button is missing so reset to normal button
             m.nextEpisodeButton.height = 100
             m.nextEpisodeButton.width = 330
@@ -109,6 +108,7 @@ sub showNextEpisodeButton()
         m.nextEpisodeButton.setFocus(true)
         m.nextEpisodeButton.visible = true
         m.buttonText.visible = true
+        m.backdrop.visible = true
     end if
 end sub
 

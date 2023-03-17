@@ -37,9 +37,10 @@
 
     <timer id="playbackTimer" repeat="true" duration="30" />
     <timer id="bufferCheckTimer" repeat="true" />
-    <Label id="buttonText" font="font:MediumSystemFont" horizAlign="center" translation="[1500, 550]" />
-    <IconButton id="nextEpisode" subText="" height="660" width="660" opacity="0" icon="" translation="[1500, 600]" background="#070707" focusBackground="#00a4dc" />
-
+    <Rectangle id="backdrop" height="400" width="660" color="#070707" translation="[1500, 550]" opacity=".75">
+      <Label id="buttonText" font="font:MediumSystemFont" horizAlign="center" translation="[1500, 550]" />
+      <IconButton id="nextEpisode" subText="" height="660" width="660" opacity="0" icon="" translation="[1500, 600]" background="#070707" focusBackground="#00a4dc" />
+    </Rectangle>
     <!--animation for the play next episode button-->
     <Animation id="showNextEpisodeButton" duration="1.0" repeat="false" easeFunction="inQuad">
       <FloatFieldInterpolator key="[0.0, 1.0]" keyValue="[0.0, .9]" fieldToInterp="nextEpisode.opacity" />
