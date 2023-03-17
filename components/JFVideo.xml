@@ -37,7 +37,7 @@
 
     <timer id="playbackTimer" repeat="true" duration="30" />
     <timer id="bufferCheckTimer" repeat="true" />
-    <Label id="buttonText" font="font:MediumSystemFont" horizAlign="center" translation="[1500, 500]" />
+    <Label id="buttonText" font="font:MediumSystemFont" horizAlign="center" translation="[1500, 550]" />
     <IconButton id="nextEpisode" subText="" height="660" width="660" opacity="0" icon="" translation="[1500, 600]" background="#070707" focusBackground="#00a4dc" />
 
     <!--animation for the play next episode button-->

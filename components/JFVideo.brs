@@ -85,7 +85,7 @@ sub onNextEpisodeDataLoaded()
         imgParams = { "maxHeight": 660, "maxWidth": 660, "quality": 90 }
         if m.getNextEpisodeTask.imageArray <> invalid
             m.nextEpisodeButton.icon = ImageURL(m.getNextEpisodeTask.nextEpisodeData.Items[1].Id, "Primary", imgParams)
-            print m.nextEpisodeButton.icon
+            'print m.getNextEpisodeTask.imageArray
         else ' episode button is missing so reset to normal button
             m.nextEpisodeButton.height = 100
             m.nextEpisodeButton.width = 330
@@ -108,6 +108,7 @@ sub showNextEpisodeButton()
         m.showNextEpisodeButtonAnimation.control = "start"
         m.nextEpisodeButton.setFocus(true)
         m.nextEpisodeButton.visible = true
+        m.buttonText.visible = true
     end if
 end sub
 
